@@ -10,7 +10,7 @@ LD:=$(CROSS_TOOL)ld
 OBJCOPY:=$(CROSS_TOOL)objcopy
 GDB:=$(CROSS_TOOL)gdb
 
-CC_OPT:= -g -mcpu=cortex-a9 -march=arm -mlittle-endian
+CC_OPT:= -g -mcpu=cortex-a9 -mlittle-endian
 LD_OPT:= -nostdlib -nodefaultlibs
 
 ifeq ($(DBG),1)

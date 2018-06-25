@@ -15,6 +15,6 @@ loader.bin: loader.elf
 loader.elf: loader.o
 	$(Q)$(LD) $(LD_OPT) -T loader.ld -o $@ $^
 
-%o: %S
+%.o: %.S
 	$(Q)$(AS) $(CC_OPT) -c -o $@ $^
 
