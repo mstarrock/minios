@@ -20,20 +20,29 @@ endif
 
 export
 
-all: loader
+all: loader kernel
+	$(Q)echo [GEN] sys.img
+	$(Q)cp loader/loader.bin ./sys.img
+	$(Q)truncate -s 4K ./sys.img
+	$(Q)cat kernel/kernel.bin >> sys.img
 
 loader:
 	$(Q)make -C loader
 
+kernel:
+	$(Q)make -C kernel
+
 clean:
 	$(Q)make -C loader/ clean
+	$(Q)make -C kernel/ clean
+	$(Q)rm -f ./sys.img
 
 run: clean all
 	$(Q)echo
 	$(Q)echo "start runing qemu"
 	$(Q)echo "NOTE: use ctrl+a x to exit"
 	$(Q)if [ $(DBG) -eq 1 ]; then echo "debug option specified, connect localhost:1234 with gdb"; fi
-	$(Q)QEMU_AUDIO_DRV=none qemu-system-arm -nographic -m 64M -M vexpress-a9 $(QEMU_DBG_OPT) -bios loader/loader.bin
+	$(Q)QEMU_AUDIO_DRV=none qemu-system-arm -nographic -m 64M -M vexpress-a9 $(QEMU_DBG_OPT) -bios sys.img
 
 dbg:
 	$(Q)$(GDB)

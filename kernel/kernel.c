@@ -41,7 +41,7 @@ struct pc_uart_reg
 
 static volatile struct pc_uart_reg * const uart0 = (volatile struct pc_uart_reg *)0x10009000;
 
-static char str[] = {"Hello World From C!\n"};
+static char str[] = {"Hello World From Kernel!\n"};
 
 void puts(char *s)
 {
@@ -53,39 +53,10 @@ void puts(char *s)
     }
 }
 
-typedef void (*kernel_entry)(void);
-
-kernel_entry load_kernel(void)
+void kernel_start(void)
 {
-    volatile uint32_t *ptr;
-    uint32_t lma_off;
-    uint32_t *vma_addr;
-    uint32_t img_size;
-    uint32_t i;
-
-    ptr = (volatile uint32_t *)0x00001000;
-    lma_off = ptr[0];
-    img_size = ptr[1]>>2;
-    vma_addr = (uint32_t *)ptr[2];
-
-    ptr = (volatile uint32_t *)(0x00001000+ptr[0]);
-
-    for(i=0; i<img_size; i++)
-    {
-        vma_addr[i] = ptr[i];
-    }
-
-    return (kernel_entry)vma_addr;
-}
-
-void loader_start_c(void)
-{
-    volatile kernel_entry entry;
-
     puts(str);
-
-    entry = load_kernel();
-    entry();
 
     while(1) ;
 }
+
