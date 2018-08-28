@@ -65,7 +65,7 @@ kernel_entry load_kernel(void)
 
     ptr = (volatile uint32_t *)0x00001000;
     lma_off = ptr[0];
-    img_size = ptr[1]>>2;
+    img_size = (ptr[1]+3)>>2;
     vma_addr = (uint32_t *)ptr[2];
 
     ptr = (volatile uint32_t *)(0x00001000+ptr[0]);
