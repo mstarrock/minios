@@ -46,10 +46,29 @@ void puts(char *s)
     }
 }
 
+void eh_invd_inst(void)
+{
+    puts("invalid instruction.\n");
+}
+
+/*
+ * this function is used for testing invalid instruction
+ * exception handle
+ */
+static void _call_invl_inst(void)
+{
+    puts("before invalid instruction.\n");
+    asm("mrc p15, 0, r0, c12, c0, 4");
+    puts("after invalid instruction.\n");
+}
+
 void kernel_start(void)
 {
     puts(str);
 
+    //_call_invl_inst();
+
+    puts("kernel halt.");
     while(1) ;
 }
 

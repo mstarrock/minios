@@ -45,4 +45,5 @@ run: clean all
 	$(Q)QEMU_AUDIO_DRV=none qemu-system-arm -nographic -m 64M -M vexpress-a9 $(QEMU_DBG_OPT) -bios sys.img
 
 dbg:
-	$(Q)$(GDB)
+	$(Q)if [ -f init.gdb ];then $(GDB) --command=init.gdb; else $(GDB); fi
+

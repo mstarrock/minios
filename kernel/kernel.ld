@@ -2,6 +2,7 @@ ENTRY(_start)
 
 KERNEL_HEADER_SIZE = 64;
 KERNEL_STACK_SIZE = 4K;
+KERNEL_EXCEPT_STACK_SIZE = 4K;
 
 MEMORY
 {
@@ -44,6 +45,10 @@ SECTIONS
         . = ALIGN(4);
     } > ddr
 
-    _kernel_stack_start = . + KERNEL_STACK_SIZE;
+    . = . + KERNEL_STACK_SIZE;
+    _kernel_stack_start = .;
+
+    . = . + KERNEL_EXCEPT_STACK_SIZE;
+    _kernel_except_stack_start = .;
 }
 
