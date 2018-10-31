@@ -14,13 +14,13 @@ kernel.bin: kernel.elf
 	$(Q)echo [OBJCOPY] $@
 	$(Q)$(OBJCOPY) -O binary $^ $@
 
-kernel.elf: startup.o kernel.o
+kernel.elf: startup.o kernel.o exception.o interrupt.o gic.o timer.o scheduler.o
 	$(Q)echo [LD] $@
 	$(Q)$(LD) $(LD_OPT) -T kernel.ld -o $@ $^
 
 %.o: %.S
 	$(Q)echo [AS] $@
-	$(Q)$(AS) $(AS_OPT) -c -o $@ $^
+	$(Q)$(CC) $(AS_OPT) -c -o $@ $^
 
 %.o: %.c
 	$(Q)echo [CC] $@

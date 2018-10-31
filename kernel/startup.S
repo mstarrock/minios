@@ -1,8 +1,8 @@
+#include "config.h"
+
 .arm
 .global _start
 .extern kernel_start
-
-#define USE_SUPV_STACK (1)
 
 .section .text
 _start:
@@ -18,8 +18,16 @@ _start:
     /* setup stack to other processor mode */
     mrs r0, cpsr
 
-    cps #27
+    cps #27 //undefined mode
     ldr sp, =_kernel_except_stack_start
+
+    cps #18 //irq mode
+    ldr sp, =_kernel_except_stack_start
+
+    cps #17 //fiq mode
+    ldr sp, =_kernel_except_stack_start
+
+    /* others - TBC */
 
     msr cpsr, r0
 #endif
@@ -58,20 +66,34 @@ _excp_vector:
 _deadloop:
     b .
 
-.extern eh_invd_inst
-
-_except_invd_inst:
+.macro gen_excpt_handle offset,func
+#if EXCPT_VECTOR_IN_C
+    b .
+#else
+    .extern \func
+    sub lr, lr, #\offset
 #if(USE_SUPV_STACK == 1)
     srsdb sp!, #19
     cps #19
     stmdb sp!, {r0-r12}
 #else
     srsdb sp!, #27
+    stmdb sp!, {r0-r12}
 #endif
-    bl eh_invd_inst
+    bl \func
     ldmia sp!, {r0-r12}
     rfeia sp!
-    subs pc, lr, #0
+#endif
+.endm
+
+_except_invd_inst:
+    gen_excpt_handle 0,eh_invd_inst
+
+_except_irq:
+    gen_excpt_handle 4,eh_irq
+
+_except_fiq:
+    gen_excpt_handle 4,eh_fiq
 
 _excp_addr:
 _excp_addr_rst:        .word _deadloop
@@ -80,6 +102,6 @@ _excp_addr_svc:        .word _deadloop
 _excp_addr_pref_abort: .word _deadloop
 _excp_addr_data_abort: .word _deadloop
 _excp_addr_hyp_trap:   .word _deadloop
-_excp_addr_irq:        .word _deadloop
-_excp_addr_fiq:        .word _deadloop
+_excp_addr_irq:        .word _except_irq
+_excp_addr_fiq:        .word _except_fiq
 

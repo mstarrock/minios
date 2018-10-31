@@ -1,4 +1,17 @@
+#include "config.h"
 #include "types.h"
+#include "cpu.h"
+#include "exception.h"
+#include "interrupt.h"
+#include "timer.h"
+#include "scheduler.h"
+
+#define GET_CPU_PRI_MEM_REG(x) do { \
+        asm("mrc p15, 4, %0, c15, c0, 0\n\t" \
+            : "=r" (cpu_priv_mem)); \
+    }while(0)
+
+uint8_t *cpu_priv_mem;
 
 struct pc_uart_reg
 {
@@ -34,8 +47,6 @@ struct pc_uart_reg
 
 static volatile struct pc_uart_reg * const uart0 = (volatile struct pc_uart_reg *)0x10009000;
 
-static char str[] = {"Hello World From Kernel!\n"};
-
 void puts(char *s)
 {
     while(*s)
@@ -46,10 +57,46 @@ void puts(char *s)
     }
 }
 
-void eh_invd_inst(void)
+#if 0
+char *itoa(char *str, int32_t val)
 {
-    puts("invalid instruction.\n");
+    char *ptr = str;;
+    int32_t base = 1000000000;
+    int8_t digit;
+
+    if(val < 0)
+    {
+        val = -val;
+        *ptr++ = '-';
+    }
+
+    /* leading zero */
+    while(base)
+    {
+        digit = val/base;
+        if(digit != 0)
+            break;
+
+        val -= (digit*base);
+        base /= 10;
+    }
+
+    /* main number */
+    while(digit)
+    {
+        *ptr++ = digit+'0';
+        val -= (digit*base);
+        base /= 10;
+        if(base == 0)
+            break;
+
+        digit = val/base;
+    }
+
+    *ptr = '\0';
+    return str;
 }
+#endif
 
 /*
  * this function is used for testing invalid instruction
@@ -64,9 +111,24 @@ static void _call_invl_inst(void)
 
 void kernel_start(void)
 {
-    puts(str);
+    puts("Hello World From Kernel!\n");
+
+    /* install exception vector */
+    excpt_init(NULL);
 
     //_call_invl_inst();
+
+    GET_CPU_PRI_MEM_REG(cpu_priv_mem);
+
+    /* init interrupt */
+    intr_init();
+
+    /* init timer */
+    timer_init(cpu_priv_mem);
+
+    /* init and start scheduler - here should never return */
+    scheduler_init();
+    scheduler_start();
 
     puts("kernel halt.");
     while(1) ;
