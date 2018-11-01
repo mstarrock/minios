@@ -1,12 +1,12 @@
 .PHONY: all clean
 
-SOURCE:=startup.S kernel.c
+SOURCE:=$(wildcard *.S) $(wildcard *.c)
+OBJECT:=$(patsubst %.S,%.o,$(patsubst %.c,%.o,$(SOURCE)))
 
 all: kernel.bin
 
 clean:
-	$(Q)rm -f startup.o
-	$(Q)rm -f kernel.o
+	$(Q)rm -f $(OBJECT)
 	$(Q)rm -f kernel.elf
 	$(Q)rm -f kernel.bin
 
@@ -14,7 +14,7 @@ kernel.bin: kernel.elf
 	$(Q)echo [OBJCOPY] $@
 	$(Q)$(OBJCOPY) -O binary $^ $@
 
-kernel.elf: startup.o kernel.o exception.o interrupt.o gic.o timer.o scheduler.o
+kernel.elf: $(OBJECT)
 	$(Q)echo [LD] $@
 	$(Q)$(LD) $(LD_OPT) -T kernel.ld -o $@ $^
 

@@ -1,12 +1,12 @@
 .PHONY: all clean
 
-SOURCE:=loader.S
+SOURCE:=$(wildcard *.S) $(wildcard *.c)
+OBJECT:=$(patsubst %.S,%.o,$(patsubst %.c,%.o,$(SOURCE)))
 
 all: loader.bin
 
 clean:
-	$(Q)rm -f loader.o
-	$(Q)rm -f loader_c.o
+	$(Q)rm -f $(OBJECT)
 	$(Q)rm -f loader.elf
 	$(Q)rm -f loader.bin
 
@@ -14,7 +14,7 @@ loader.bin: loader.elf
 	$(Q)echo [OBJCOPY] $@
 	$(Q)$(OBJCOPY) -O binary $^ $@
 
-loader.elf: loader.o loader_c.o
+loader.elf: $(OBJECT)
 	$(Q)echo [LD] $@
 	$(Q)$(LD) $(LD_OPT) -T loader.ld -o $@ $^
 
