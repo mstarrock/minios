@@ -1,5 +1,7 @@
 ENTRY(_start)
 
+#include "sys_config.h"
+
 KERNEL_HEADER_SIZE = 64;
 KERNEL_STACK_SIZE = 8K;
 KERNEL_EXCEPT_STACK_SIZE = 4K;
@@ -7,7 +9,7 @@ KERNEL_EXCEPT_STACK_SIZE = 4K;
 MEMORY
 {
     header : ORIGIN = 0x00000000, LENGTH = KERNEL_HEADER_SIZE
-    ddr    : ORIGIN = 0x60000000, LENGTH = 64M
+    ddr    : ORIGIN = SYS_MEM_ADDR, LENGTH = SYS_MEM_SIZE
 }
 
 SECTIONS
@@ -50,5 +52,8 @@ SECTIONS
 
     . = . + KERNEL_EXCEPT_STACK_SIZE;
     _kernel_except_stack_start = .;
+
+    _mem_pool_start = ALIGN(4096);
+    _mem_pool_end = ORIGIN(ddr)+LENGTH(ddr)-1;
 }
 

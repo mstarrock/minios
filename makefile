@@ -7,12 +7,14 @@ CROSS_TOOL:=arm-none-eabi-
 AS:=$(CROSS_TOOL)as
 CC:=$(CROSS_TOOL)gcc
 LD:=$(CROSS_TOOL)ld
+CPP:=$(CROSS_TOOL)cpp
 OBJCOPY:=$(CROSS_TOOL)objcopy
 GDB:=$(CROSS_TOOL)gdb
 
 CC_OPT:= -g -mcpu=cortex-a9 -mlittle-endian -fno-builtin
 AS_OPT:= -g -mcpu=cortex-a9 -mlittle-endian
 LD_OPT:= -nostdlib -nodefaultlibs -nobuildin
+CFLAGS:= -I/root/project/minios/include/
 
 ifeq ($(DBG),1)
 QEMU_DBG_OPT:=-s -S
