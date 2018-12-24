@@ -10,7 +10,7 @@ SECTIONS
 
     _data_from_start = .;
     _data_from_end = _data_from_start + SIZEOF(.data);
-    . = 0x60000000;
+    . = 0x60000000+0x4000000-SIZEOF(.data)-SIZEOF(.bss);
     _data_to_start = .;
     .data : AT(LOADADDR(.rodata)+SIZEOF(.rodata)) { *(.data) . = ALIGN(4);}
 
