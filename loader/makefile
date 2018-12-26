@@ -17,7 +17,7 @@ loader.bin: loader.elf
 
 loader.elf: loader.ld $(OBJECT)
 	$(Q)echo [LD] $@
-	$(LD) $(LD_OPT) -T loader.ld -o $@ $(OBJECT)
+	$(Q)$(LD) $(LD_OPT) -T loader.ld -o $@ $(OBJECT)
 
 %.o: %.S
 	$(Q)echo [AS] $@
