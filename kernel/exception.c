@@ -6,33 +6,6 @@
 
 static excpt_handle handler[ET_ALL];
 
-#if EXCPT_VECTOR_IN_C
-#define EXCPT_ENTRY __attribute__((naked)) static
-
-#if USE_SUPV_STACK
-#define EXCPT_START(x) do { \
-        asm volatile("sub lr, lr, #"#x"\n\t" \
-            "srsdb sp!, #19\n\t" \
-            "cps #19\n\t" \
-            "stmdb sp!, {r0-r12}\n\t"); \
-        }while(0)
-#else
-#define EXCPT_START(x) do { \
-        asm volatile("sub lr, lr, #"#x"\n\t" \
-        "srsdb sp!, #27\n\t" \
-        "stmdb sp!, {r0-r12}\n\t"); \
-        }while(0)
-#endif
-
-#define EXCPT_END() do {asm("ldmia sp!, {r0-r12}\n\t" \
-        "rfeia sp!\n\t"); \
-        }while(0)
-#else
-#define EXCPT_ENTRY
-#define EXCPT_START(x)
-#define EXCPT_END()
-#endif
-
 EXCPT_ENTRY void eh_dummy(void)
 {
     while(1) ;
@@ -57,7 +30,7 @@ EXCPT_ENTRY void eh_irq(void)
     if(handler[ET_IRQ])
         (handler[ET_IRQ])();
 
-    EXCPT_END();
+    asm("b do_scheduling");
 }
 
 EXCPT_ENTRY void eh_fiq(void)

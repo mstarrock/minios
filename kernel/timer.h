@@ -6,6 +6,7 @@ typedef uint32_t timer_t;
 struct timer_cfg
 {
     bool auto_start;
+    uint32_t interval;
 };
 
 typedef void (*timer_cb)(timer_t timer);

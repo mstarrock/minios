@@ -29,6 +29,8 @@ static timer_cb timer_user_cb;
 
 static void timer_intr_cb(uint32_t id)
 {
+    gt_reg->ISR = 0x1;
+
     if(timer_user_cb)
         timer_user_cb(0);
 }
@@ -48,9 +50,9 @@ timer_t timer_open(struct timer_cfg *cfg)
     gt_reg->CR = 0x0;
     gt_reg->CR_LO = 0x0;
     gt_reg->CR_HI = 0x0;
-    gt_reg->CVR_LO = 0x1000000;
+    gt_reg->CVR_LO = cfg->interval;
     gt_reg->CVR_HI = 0x0;
-    gt_reg->AIR = 0x1000000;
+    gt_reg->AIR = cfg->interval;
     gt_reg->ISR = 0x1;
 #if 0
     // private timer

@@ -4,4 +4,10 @@
 void scheduler_init(void);
 void scheduler_start(void);
 
+/*
+ * do not call this function directly,
+ * unless you know what you're doing
+ */
+void do_scheduling(void);
+
 #endif
