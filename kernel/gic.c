@@ -76,6 +76,7 @@ void arm_gic_init(uint8_t *base)
     {
         intr_dist->ICDICPRn[i] = 0xffffffff;
         intr_dist->ICDICERn[i] = 0xffffffff;
+        intr_dist->ICDIPTR[i] = 0;
     }
 
     intr_dist->ICDDCR = 0x3;
