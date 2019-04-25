@@ -41,8 +41,6 @@ struct pc_uart_reg
 
 static volatile struct pc_uart_reg * const uart0 = (volatile struct pc_uart_reg *)0x10009000;
 
-static char str[] = {"Hello World From C!\n"};
-
 void puts(char *s)
 {
     while(*s)
@@ -82,9 +80,11 @@ void loader_start_c(void)
 {
     volatile kernel_entry entry;
 
-    puts(str);
+    puts("load kernel...");
 
     entry = load_kernel();
+
+    puts("done\n");
     entry();
 
     while(1) ;

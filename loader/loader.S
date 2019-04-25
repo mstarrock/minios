@@ -64,4 +64,5 @@ _uart_cr_init:
 
 .section .rodata
 _hw_str:
-    .byte 'H','e','l','l','o',' ','W','o','r','l','d','!',0x0a,0x00
+    .byte 'b','o','o','t','l','o','a','d','e','r',' '
+    .byte 'r','u','n','n','i','n','g',0x0a,0x00

@@ -30,7 +30,7 @@ void kernel_start(void)
 {
     uart_init();
 
-    puts("Hello World From Kernel!\n");
+    puts("miniOS kernel running\n");
 
     /* install exception vector */
     excpt_init(NULL);
@@ -50,6 +50,8 @@ void kernel_start(void)
 
     /* init and start scheduler - here should never return */
     scheduler_init();
+
+    puts("start scheduling\n");
     scheduler_start();
 
     puts("kernel halt.");
