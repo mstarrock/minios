@@ -34,7 +34,7 @@ thread_t thread_create(
 
     do
     {
-        spinlock_lock_save_irq(thread_global_lock, flag);
+        spinlock_lock_save_irq(&thread_global_lock, flag);
 
         /* find empty thread slot */
         for(idx=0; idx<MAX_SUPPORT_TRHEAD; idx++)
@@ -48,7 +48,7 @@ thread_t thread_create(
             }
         }
 
-        spinlock_unlock_restore_irq(thread_global_lock, flag);
+        spinlock_unlock_restore_irq(&thread_global_lock, flag);
 
         if(NULL == t)
             break;
